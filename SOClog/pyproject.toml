@@ -1,1 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
+[project]
+name = "soclog"
+version = "0.1.0"
+description = "SOClog - Remote Windows log and process collector for SOC analysts"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name", email = "you@example.com" }
+]
+dependencies = [
+  "pywinrm>=0.4.3",
+  "PyYAML>=6.0"
+]
+
+[project.scripts]
+soclog = "soclog.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["soclog"]
