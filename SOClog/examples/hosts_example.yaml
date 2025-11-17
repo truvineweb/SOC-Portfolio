@@ -1,1 +1,10 @@
+hosts:
+  - name: win10lab
+    host: 192.168.56.10
+    username: LAB\\analyst
+    password_env: SOCLOG_WIN10_PASS
 
+  - name: win11lab
+    host: win11.lab.local
+    username: LAB\\dfir
+    ask_password: true
