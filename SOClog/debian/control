@@ -1,1 +1,17 @@
+Source: soclog
+Section: admin
+Priority: optional
+Maintainer: Your Name <you@example.com>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-pip
+Standards-Version: 4.5.1
+Homepage: https://github.com/youruser/SOClog
+Rules-Requires-Root: no
 
+Package: soclog
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3-pywinrm, python3-yaml, gpg
+Description: SOClog - remote Windows log and process collector
+ SOClog is a simple command line tool, intended for SOC/DFIR lab use,
+ that connects from Kali to Windows hosts using WinRM, collects recent
+ Sysmon and Security logs plus a running process list, and stores them
+ with integrity hashes and optional GPG signatures.
