@@ -1,1 +1,5 @@
+soclog (0.1.0-1) unstable; urgency=medium
 
+  * Initial release of SOClog for Kali/Debian.
+
+ -- Your Name <you@example.com>  Sun, 16 Nov 2025 12:00:00 +0000
