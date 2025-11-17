@@ -1,1 +1,2 @@
-
+pywinrm>=0.4.3
+PyYAML>=6.0
