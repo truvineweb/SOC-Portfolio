@@ -2,6 +2,7 @@ import argparse
 import getpass
 import json
 import os
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -24,6 +25,53 @@ from .integrity import (
 )
 from .windows_remote import WindowsRemote, WindowsRemoteError
 import zipfile
+
+# =========================
+#  Warning suppression
+#  (hide spnego/ARC4 deprecation noise)
+# =========================
+try:
+    from cryptography.utils import CryptographyDeprecationWarning
+
+    warnings.filterwarnings("ignore", category=CryptographyDeprecationWarning)
+except Exception:
+    # If cryptography layout changes, just ignore
+    pass
+
+# =========================
+#  Simple ANSI colours
+# =========================
+RESET = "\033[0m"
+BOLD = "\033[1m"
+DIM = "\033[2m"
+
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+
+
+def print_banner() -> None:
+    """Print the SOC SIEM ASCII banner and SOClog tagline."""
+    print()
+    # Clear, readable "SOC SIEM" in ASCII
+    print(f"{BOLD}{CYAN}  SSS   OOO   CCCC       SSS   III  EEEEE  MM   MM{RESET}")
+    print(f"{BOLD}{CYAN} S     O   O  C          S       I   E      MMM MMM{RESET}")
+    print(f"{BOLD}{CYAN}  SSS  O   O  C           SSS    I   EEEE   MM M MM{RESET}")
+    print(f"{BOLD}{CYAN}     S O   O  C              S   I   E      MM   MM{RESET}")
+    print(f"{BOLD}{CYAN}  SSS   OOO   CCCC       SSS    III  EEEEE  MM   MM{RESET}")
+    print()
+
+    print(f"{BOLD}{GREEN}SOClog - Windows DFIR Collector{RESET}")
+    print(f"{DIM}     * Remote Sysmon + Security logs{RESET}")
+    print(f"{DIM}     * Process inventory + hashes{RESET}")
+    print(f"{DIM}     * Integrity manifest + ZIP.{RESET}")
+    print()
+    print(f"{BOLD}{YELLOW}USE FOR EDUCATIONAL PURPOSES!{RESET}")
+    print(f"{BOLD}{MAGENTA}Author: @truvineweb{RESET}")
+    print()
 
 
 def parse_args() -> argparse.Namespace:
@@ -125,6 +173,26 @@ def prepare_output_dir(base_output: str, host_name: str) -> Path:
     return path
 
 
+def print_progress(stage: str, current_step: int, total_steps: int) -> None:
+    """
+    Print a simple stage-based progress bar.
+
+    This is not per-event or per-byte; it's per major stage:
+      1) Connect
+      2) Sysmon
+      3) Security
+      4) Processes
+      5) Manifest (+sign)
+      6) ZIP
+    """
+    percent = int(current_step * 100 / total_steps)
+    bar_width = 30
+    filled = int(bar_width * percent / 100)
+    bar = "█" * filled + "-" * (bar_width - filled)
+    print(f"{BLUE}[>]{RESET} {stage}")
+    print(f"    {BOLD}{GREEN}{bar}{RESET} {BOLD}{percent:3d}%{RESET}")
+
+
 def create_zip_from_dir(target_dir: Path, zip_path: Path) -> None:
     """Zip the contents of a directory into zip_path."""
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -137,13 +205,14 @@ def create_zip_from_dir(target_dir: Path, zip_path: Path) -> None:
 
 
 def main() -> None:
+    print_banner()
     args = parse_args()
 
     if args.host and not args.user:
-        raise SystemExit("Error: --host requires --user.")
+        raise SystemExit(f"{RED}Error: --host requires --user.{RESET}")
 
     if args.config and args.user:
-        raise SystemExit("Error: --config mode does not use --user.")
+        raise SystemExit(f"{RED}Error: --config mode does not use --user.{RESET}")
 
     # Determine hours/days
     hours = args.hours
@@ -160,7 +229,10 @@ def main() -> None:
     base_output = args.output_dir
 
     for cfg in host_configs:
-        print(f"[*] Collecting from host: {cfg.name} ({cfg.host})")
+        print(
+            f"{BOLD}{CYAN}[*]{RESET} {BOLD}Collecting from host:{RESET} "
+            f"{YELLOW}{cfg.name}{RESET} {DIM}({cfg.host}){RESET}"
+        )
 
         password = resolve_password_for_host(cfg)
 
@@ -172,11 +244,15 @@ def main() -> None:
 
         if password is None:
             print(
-                f"[!] No password available for host {cfg.name}. "
-                f"Use an env var (password_env) or --ask-pass."
+                f"{RED}[!]{RESET} No password available for host {cfg.name}. "
+                "Use an env var (password_env) or --ask-pass."
             )
             continue
 
+        total_steps = 6
+
+        # ========== CONNECT ==========
+        print_progress("Connecting via WinRM (NTLM)...", 1, total_steps)
         try:
             client = WindowsRemote(
                 host=cfg.host,
@@ -186,15 +262,23 @@ def main() -> None:
                 ask_password_if_missing=False,
             )
         except WindowsRemoteError as exc:
-            print(f"[!] Failed to connect to {cfg.name}: {exc}")
+            print(f"{RED}[!]{RESET} Failed to connect to {cfg.name}: {exc}")
             continue
 
         out_dir = prepare_output_dir(base_output, cfg.name)
-        print(f"    Output directory: {out_dir}")
+        print(
+            f"    {BOLD}Output directory:{RESET} "
+            f"{MAGENTA}{out_dir}{RESET}"
+        )
 
         collected_files: List[str] = []
 
-        # ========== Sysmon ==========
+        # ========== SYSMON ==========
+        print_progress(
+            "Starting Sysmon collection (this may take a bit)...",
+            2,
+            total_steps,
+        )
         try:
             status, sysmon_data = collect_sysmon_logs(client, hours=hours, days=days)
             sysmon_path = out_dir / "sysmon_events.json"
@@ -203,15 +287,20 @@ def main() -> None:
             collected_files.append(str(sysmon_path))
 
             if status == "missing":
-                print("    [!] Sysmon not installed on this host.")
+                print(f"    {YELLOW}[!]{RESET} Sysmon not installed on this host.")
             elif status == "empty":
-                print("    [*] No Sysmon events for requested time range.")
+                print(
+                    f"    {YELLOW}[*]{RESET} No Sysmon events for requested time range."
+                )
             else:
-                print("    [+] Sysmon events collected.")
+                print(f"    {GREEN}[+]{RESET} Sysmon events collected.")
         except WindowsRemoteError as exc:
-            print(f"    [!] Failed to collect Sysmon logs: {exc}")
+            print(f"    {RED}[!]{RESET} Failed to collect Sysmon logs: {exc}")
 
-        # ========== Security Log ==========
+        # ========== SECURITY LOG ==========
+        print_progress(
+            "Starting Security log collection...", 3, total_steps
+        )
         try:
             status, sec_data = collect_security_logs(client, hours=hours, days=days)
             sec_path = out_dir / "security_events.json"
@@ -220,30 +309,36 @@ def main() -> None:
             collected_files.append(str(sec_path))
 
             if status == "empty":
-                print("    [*] No Security log events for requested time range.")
+                print(
+                    f"    {YELLOW}[*]{RESET} No Security log events for requested time range."
+                )
             else:
-                print("    [+] Security log events collected.")
+                print(f"    {GREEN}[+]{RESET} Security log events collected.")
         except WindowsRemoteError as exc:
-            print(f"    [!] Failed to collect Security logs: {exc}")
+            print(f"    {RED}[!]{RESET} Failed to collect Security logs: {exc}")
 
-        # ========== Processes ==========
+        # ========== PROCESSES ==========
+        print_progress(
+            "Collecting running processes and hashes...", 4, total_steps
+        )
         try:
             proc_data = collect_processes(client)
             proc_path = out_dir / "processes.json"
             with open(proc_path, "w", encoding="utf-8") as f:
                 json.dump(proc_data, f, indent=2)
             collected_files.append(str(proc_path))
-            print("    [+] Process list collected.")
+            print(f"    {GREEN}[+]{RESET} Process list collected.")
         except WindowsRemoteError as exc:
-            print(f"    [!] Failed to collect process list: {exc}")
+            print(f"    {RED}[!]{RESET} Failed to collect process list: {exc}")
 
-        # ========== Manifest & Integrity ==========
+        # ========== MANIFEST & INTEGRITY ==========
         if collected_files:
+            print_progress("Building integrity manifest...", 5, total_steps)
             manifest = build_manifest(collected_files, host=cfg.name)
             manifest_path = out_dir / "manifest.json"
             write_manifest(manifest, str(manifest_path))
             collected_files.append(str(manifest_path))
-            print("    [+] manifest.json generated.")
+            print(f"    {GREEN}[+]{RESET} manifest.json generated.")
 
             if args.sign_manifest:
                 sig_path = out_dir / "manifest.sig"
@@ -254,16 +349,30 @@ def main() -> None:
                         gpg_key=args.gpg_key,
                     )
                     collected_files.append(str(sig_path))
-                    print("    [+] manifest.sig created (GPG signature).")
+                    print(f"    {GREEN}[+]{RESET} manifest.sig created (GPG signature).")
                 except Exception as exc:
-                    print(f"    [!] Failed to sign manifest with GPG: {exc}")
+                    print(
+                        f"    {YELLOW}[!]{RESET} Failed to sign manifest with GPG: {exc}"
+                    )
 
             # ========== ZIP ==========
+            print_progress("Packaging artefacts into ZIP...", 6, total_steps)
             zip_path = out_dir / f"soclog_{cfg.name}_{out_dir.name}.zip"
-            create_zip_from_dir(out_dir, zip_path)
-            print(f"    [+] ZIP created: {zip_path}")
+            try:
+                create_zip_from_dir(out_dir, zip_path)
+                print(f"    {GREEN}[+]{RESET} ZIP created: {BOLD}{zip_path}{RESET}")
+            except OSError as exc:
+                if exc.errno == 28:
+                    print(
+                        f"    {YELLOW}[!]{RESET} Failed to create ZIP: no space left on device. "
+                        f"Collected files and manifest are still available in {out_dir}."
+                    )
+                else:
+                    print(f"    {RED}[!]{RESET} Failed to create ZIP: {exc}")
         else:
-            print("    [!] No artefacts collected; skipping manifest and ZIP.")
+            print(
+                f"    {YELLOW}[!]{RESET} No artefacts collected; skipping manifest and ZIP."
+            )
 
 
 if __name__ == "__main__":
