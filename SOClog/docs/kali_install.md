@@ -1,20 +1,30 @@
 ```markdown
-# Installing SOClog on Kali
+1. Add your SOClog APT repo
 
-You can use SOClog in two ways:
+Suppose your SOClog repo is served from your Kali at http://192.168.115.130:8080/
+(Replace with your real IP.)
 
-1. **Run from source** (simplest first step).
-2. Build a **.deb package** and serve it via a small apt repository.
+On their Kali:
 
----
+# See their IP to confirm connectivity to your repo box
+ip a
 
-## 1. Requirements on Kali
+# Add your SOClog repo (trusted for lab)
+echo "deb [trusted=yes] http://192.168.115.130:8080/ ./" | \
+  sudo tee /etc/apt/sources.list.d/soclog.list
 
-Install basic tools:
-
-```bash
 sudo apt update
-sudo apt install -y python3 python3-pip python3-venv gpg
 
-#For building Debian packages:
-sudo apt install -y devscripts debhelper dh-python build-essential
+2. Install SOClog
+sudo apt install -y soclog
+
+
+Check it’s installed:
+
+soclog --help
+
+
+They should see your new banner + help text.
+
+
+
