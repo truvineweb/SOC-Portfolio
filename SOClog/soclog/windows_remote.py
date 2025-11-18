@@ -60,11 +60,14 @@ class WindowsRemote:
         """
         Execute a PowerShell script remotely and return (status_code, stdout, stderr).
 
-        Note: Some pywinrm versions do not support a 'timeout' argument on run_ps,
-        so we ignore the timeout parameter here and just call run_ps(script).
+        NOTE: The current python3-winrm package on Kali does not accept a
+        'timeout' argument for run_ps(), so we ignore the timeout parameter
+        here and rely on the library defaults.
+
+        stdout and stderr are returned as decoded text (UTF-8).
         """
         try:
-            # pywinrm run_ps defaults to UTF-8 output
+            # Do NOT pass timeout here – older python3-winrm doesn't support it
             result = self.session.run_ps(script)
         except Exception as exc:  # broad but fine for outer boundary
             raise WindowsRemoteError(f"Failed to run PowerShell: {exc}") from exc
