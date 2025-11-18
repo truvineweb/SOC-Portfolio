@@ -1,76 +1,106 @@
-# SOClog
+# SOClog – Windows DFIR Collector
 
-SOClog is a Kali Linux CLI tool that connects to one or more Windows hosts,
-collects recent:
+SOClog is a **Kali-based DFIR helper tool** that connects to Windows endpoints over **WinRM (NTLM)** and collects:
 
-- Sysmon logs (if Sysmon is installed),
-- Windows Security event logs,
-- Running process list with SHA-256 hashes,
+- Recent **Sysmon** event logs (if installed)
+- Recent **Windows Security** event logs
+- A **running process inventory** with SHA-256 hashes
+- An **integrity manifest** (file hashes, size, timestamps), plus optional GPG signature
+- A timestamped **ZIP archive** per host for offline analysis
 
-and saves everything into a timestamped directory and ZIP file on Kali, together
-with a `manifest.json` that contains integrity hashes for each artefact. The
-manifest can optionally be signed with GPG.
+> **Lab use only.** SOClog is designed for **educational / lab environments**, not for production systems.
 
-This is designed for SOC analysts / DFIR who want a simple way to grab
-forensic artefacts from lab Windows machines without writing code.
+---
 
-> ❗ Always keep your experiments in a safe, isolated lab.  
-> Do not run SOClog or its techniques against production or external systems
-> without proper authorization.
+## What this tool does (plain language)
 
-## What this tool does (in one paragraph)
+Imagine you’re a SOC / DFIR analyst and you need a quick evidence bundle from a Windows machine:
 
-From Kali, you run a single command (`soclog`). It uses WinRM to talk to
-Windows, runs PowerShell commands to pull recent Sysmon and Security logs
-plus the current process list, receives everything as JSON, writes files into
-`~/soclog_output/<hostname>/<timestamp>/`, generates `manifest.json` with
-SHA-256 hashes of each file, and then creates a `soclog_<hostname>_<timestamp>.zip`
-for offline analysis.
+- “Give me the last few hours of Sysmon and Security logs.”
+- “Show me which processes were running and their hashes.”
+- “Give me a bundle I can store, hash, and share with the incident team.”
+
+SOClog does exactly that from **Kali Linux**:
+
+1. Connects to a Windows host over **WinRM (NTLM)**.
+2. Runs **PowerShell** to export:
+   - Sysmon events (if the Sysmon log exists).
+   - Security log events.
+   - Running processes (PID, name, path, user where possible, SHA-256).
+3. Saves everything into:
+   - `~/soclog_output/<hostname>/<YYYYMMDD_HHMMSS>/`
+4. Creates:
+   - `manifest.json` with SHA-256 hashes, sizes, timestamps, host info.
+   - Optional `manifest.sig` (GPG signature).
+   - `soclog_<hostname>_<timestamp>.zip` with all artefacts.
+
+---
 
 ## High-level architecture
 
-- **Kali / Linux**
-  - Python 3 CLI (`soclog`) using `pywinrm` and `PyYAML`.
-  - Optional GPG for manifest signing.
-- **Windows endpoints**
-  - WinRM enabled.
-  - PowerShell available (default on modern Windows).
-  - Account with permission to read event logs and process info.
+**Controller (Kali):**
 
-Interaction:
+- Python 3 CLI: `soclog`
+- Uses [`pywinrm`](https://pypi.org/project/pywinrm/) to talk to WinRM on Windows.
+- Reads a **YAML config file** of hosts (`hosts.yaml`) or a single `--host / --user`.
+- Writes JSON artefacts, manifest, and ZIP into `~/soclog_output`.
 
-1. `soclog` connects to Windows via WinRM.
-2. Runs PowerShell to fetch logs/processes as JSON.
-3. Saves files + manifest + ZIP on Kali.
+**Windows endpoints:**
 
-## Sysmon vs Security logs (quick explanation)
+- Windows 10 / 11 lab machines.
+- WinRM enabled over HTTP (port 5985) with **NTLM** authentication.
+- PowerShell cmdlets used:
+  - `Get-WinEvent` for Sysmon + Security logs.
+  - `Get-Process`, `Get-Item`, and hashing via `.NET` for processes.
+- No agent is installed; everything is done over remote PowerShell.
 
-- **Sysmon log** (Microsoft Sysinternals Sysmon):
-  - Extra telemetry: process creation with hashes, network connections, file
-    changes, etc.
-  - Great for attack simulation and detection engineering.
-  - Not installed by default; you (or your lab) must install and configure it.
+---
 
-- **Windows Security log**:
-  - Built-in log (LogName: `Security`).
-  - Contains authentication events (logon/logoff), privilege use, policy changes,
-    etc.
-  - Core source for many SOC detections, especially around identity.
+## Requirements
 
-SOClog simply pulls recent events from both to give you a small “snapshot”
-for analysis.
+### On Windows
 
-## Quick start
+- Windows 10 or 11 (lab VM recommended).
+- **WinRM enabled** (HTTP, unencrypted allowed for lab).
+- A user account (e.g. `Divine-Lab\soclog_analyst`) that:
+  - Has local admin rights (for event logs + process/hashes).
+  - Has a known password you can type into Kali.
+- Optional: **Sysmon** installed with logging to:
+  `Microsoft-Windows-Sysmon/Operational`.
 
-If you just want the commands, see  
-[docs/kali_install.md](docs/kali_install.md) and  
-[docs/windows_setup.md](docs/windows_setup.md).
+> Detailed Windows steps: see [`docs/windows_setup.md`](docs/windows_setup.md)
 
-Typical usage after setup:
+### On Kali
+
+- Kali Linux (or Debian-based) with:
+  - Python 3
+  - `python3-winrm`
+  - `python3-yaml`
+- For APT installation:
+  - Access to your **custom SOClog APT repo** (simple HTTP server).
+
+> Detailed Kali install options: see [`docs/kali_install.md`](docs/kali_install.md)
+
+---
+
+## Quick start (APT install)
+
+These steps assume someone in your lab has already:
+
+- Built the `soclog_0.1.0-1_all.deb`.
+- Published it via a simple APT repo (see `docs/kali_install.md`).
+
+On Kali:
 
 ```bash
-# Single host
-soclog --host 192.168.56.10 --user LAB\\analyst --hours 4 --ask-pass
+# 1. Add the SOClog repo (replace IP with your repo host)
+echo "deb [trusted=yes] http://192.168.115.130:8080/ ./" | \
+  sudo tee /etc/apt/sources.list.d/soclog.list
 
-# Or with a hosts file (examples/hosts_example.yaml)
-soclog --config examples/hosts_example.yaml --days 1
+sudo apt update
+
+# 2. Install SOClog
+sudo apt install -y soclog
+
+# 3. Confirm it runs
+soclog --help
