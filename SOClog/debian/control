@@ -2,7 +2,7 @@ Source: soclog
 Section: admin
 Priority: optional
 Maintainer: Your Name <you@example.com>
-Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-pip
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-pip, pybuild-plugin-pyproject
 Standards-Version: 4.5.1
 Homepage: https://github.com/youruser/SOClog
 Rules-Requires-Root: no
