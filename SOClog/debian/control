@@ -9,9 +9,9 @@ Rules-Requires-Root: no
 
 Package: soclog
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, python3-pywinrm, python3-yaml, gpg
+Depends: ${python3:Depends}, ${misc:Depends}, python3-winrm, python3-yaml
 Description: SOClog - remote Windows log and process collector
  SOClog is a simple command line tool, intended for SOC/DFIR lab use,
  that connects from Kali to Windows hosts using WinRM, collects recent
  Sysmon and Security logs plus a running process list, and stores them
- with integrity hashes and optional GPG signatures.
+ with integrity hashes. GPG signing of manifests is supported but optional.
