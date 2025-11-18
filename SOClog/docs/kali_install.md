@@ -1,12 +1,12 @@
 ```markdown
-1. Add your SOClog APT repo
+1. Add SOClog APT repo
 
 Suppose your SOClog repo is served from your Kali at http://192.168.115.130:8080/
 (Replace with your real IP.)
 
-On their Kali:
+On Kali:
 
-# See their IP to confirm connectivity to your repo box
+# See your IP to confirm connectivity to your repo box
 ip a
 
 # Add your SOClog repo (trusted for lab)
@@ -24,7 +24,7 @@ Check it’s installed:
 soclog --help
 
 
-They should see your new banner + help text.
+
 
 
 
