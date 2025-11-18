@@ -264,3 +264,7 @@ def main() -> None:
             print(f"    [+] ZIP created: {zip_path}")
         else:
             print("    [!] No artefacts collected; skipping manifest and ZIP.")
+
+
+if __name__ == "__main__":
+    main()
