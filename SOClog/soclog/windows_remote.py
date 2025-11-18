@@ -56,15 +56,16 @@ class WindowsRemote:
             server_cert_validation="validate" if verify_ssl else "ignore",
         )
 
-    def run_powershell(self, script: str, timeout: int = 120):
+        def run_powershell(self, script: str, timeout: int = 120):
         """
         Execute a PowerShell script remotely and return (status_code, stdout, stderr).
 
-        stdout and stderr are returned as decoded text (UTF-8).
+        Note: Some pywinrm versions do not support a 'timeout' argument on run_ps,
+        so we ignore the timeout parameter here and just call run_ps(script).
         """
         try:
             # pywinrm run_ps defaults to UTF-8 output
-            result = self.session.run_ps(script, timeout=timeout)
+            result = self.session.run_ps(script)
         except Exception as exc:  # broad but fine for outer boundary
             raise WindowsRemoteError(f"Failed to run PowerShell: {exc}") from exc
 
@@ -76,3 +77,4 @@ class WindowsRemote:
         ) else result.std_err
 
         return result.status_code, stdout, stderr
+
