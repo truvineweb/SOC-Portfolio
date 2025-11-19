@@ -1,5 +1,5 @@
-''''
-#Phishing Email Body (Rendered View)
+##Phishing Email Body (Rendered View)
+
 Hi SOCanalyst,
 We were unable to process your recent payment for your CloudSync Storage subscription. As a result, your account is currently past due.
 
@@ -19,6 +19,7 @@ This is an automated notification about your subscription. Replies to this email
 
 
 ##URLS
+
 CTA Button Text
 Review Billing Details
 
