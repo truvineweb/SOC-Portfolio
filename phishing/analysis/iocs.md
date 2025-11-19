@@ -3,8 +3,8 @@
 | Type               | Value                                                                                                  | Context / Notes                                                        |
 |--------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
 | Sender display     | Thomas J                                                                                               | Display name in `From` header                                          |
-| Sender address     | `jt214113@gmail.com`                                                                                   | Authenticated Gmail sender, impersonating CloudSync billing            |
-| Return-Path        | `jt214113@gmail.com`                                                                                   | Envelope sender                                                        |
+| Sender address     | `jt2141**@gmail.com`                                                                                   | Authenticated Gmail sender, impersonating CloudSync billing            |
+| Return-Path        | `jt2141**@gmail.com`                                                                                   | Envelope sender                                                        |
 | Recipient address  | `socanalyst65@outlook.com`                                                                             | Lab victim mailbox                                                     |
 | Subject            | `CloudSync Storage: payment could not be processed.`                                                   | Phishing subject (billing / payment failure)                           |
 | Source IP          | `209.85.128.49`                                                                                        | Gmail mail server IP used in this simulation                           |
