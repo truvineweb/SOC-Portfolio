@@ -1,1 +1,215 @@
+Received: from GV1P193MB2165.EURP193.PROD.OUTLOOK.COM (2603:10a6:150:2b::20)
+ by VI0P193MB2432.EURP193.PROD.OUTLOOK.COM with HTTPS; Wed, 19 Nov 2025
+ 22:53:20 +0000
+Received: from SA0PR11CA0034.namprd11.prod.outlook.com (2603:10b6:806:d0::9)
+ by GV1P193MB2165.EURP193.PROD.OUTLOOK.COM (2603:10a6:150:2b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
+ 2025 22:53:19 +0000
+Received: from SA2PEPF00003AE8.namprd02.prod.outlook.com
+ (2603:10b6:806:d0:cafe::b) by SA0PR11CA0034.outlook.office365.com
+ (2603:10b6:806:d0::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.10 via Frontend Transport; Wed,
+ 19 Nov 2025 22:53:17 +0000
+Authentication-Results: spf=pass (sender IP is 209.85.128.49)
+ smtp.mailfrom=gmail.com; dkim=pass (signature was verified)
+ header.d=gmail.com;dmarc=pass action=none header.from=gmail.com;compauth=pass
+ reason=100
+Received-SPF: Pass (protection.outlook.com: domain of gmail.com designates
+ 209.85.128.49 as permitted sender) receiver=protection.outlook.com;
+ client-ip=209.85.128.49; helo=mail-wm1-f49.google.com; pr=C
+Received: from mail-wm1-f49.google.com (209.85.128.49) by
+ SA2PEPF00003AE8.mail.protection.outlook.com (10.167.248.8) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.9
+ via Frontend Transport; Wed, 19 Nov 2025 22:53:17 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:68344EBD73A3A9E455DF07C97623EECB397D131268B686F44F39104D78E61E28;UpperCasedChecksum:6FED31EC6D4C2FC6E596367DBB918A57D4BA92408C835B744AA8DB8C7D802D9F;SizeAsReceived:2847;Count:15
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477632d9326so1714435e9.1
+        for <socanalyst65@outlook.com>; Wed, 19 Nov 2025 14:53:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763592797; x=1764197597; darn=outlook.com;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=efVQDn9PXTPoPVy1IOgsFK3gvjF6c1i0tVbAnIkNgeU=;
+        b=fShqeFmyWAlNh57dvMemXH+PFoQH04NuYBEzv75/pSA9SiSJZ5n9FwB+16HrxtPIBN
+         5J6MFWipbxfuHJm0lLOwrcNlhkBF6ODHdrGTaENLvcmfc/z8C29sEBj/C7cdd5AAalHq
+         vln1pq41PMP/W7V6q4y8omyBTik6fDVRnKduFlIftM65wRpKuCpeGk+gc42PyyDBPo7J
+         +wY52SWq/L40DjxhxjDQfkM+YvViUoSCLGMmE1NMudBxqpTPRA+VDWqvRPs9dJCoJbJW
+         MB22xW/M/8YL80f8xjC0DRpk8StvrE3/fwc5a3XiPYb4SL1PTnRx9R0Wah/Na8rcahRR
+         ljyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763592797; x=1764197597;
+        h=to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=efVQDn9PXTPoPVy1IOgsFK3gvjF6c1i0tVbAnIkNgeU=;
+        b=Xv5IZQk/TXZcMaSNcJAWNA1Gz+X4xm+r5AmYTFf/blnzQCIVPH/igmNfutaVF+kxq8
+         ENF1HOPxnWeLMlPeX9AaZD2NtZUlqRFQZmKKHWF81w6naXVyG4S4cPbIzsGTEgaHrlG2
+         GSAw4OD2O++lKy3AqW42wPGRvz17UZdMh5+BLbn5QVHst6BGChZRSZpeuI0lfj4LFPxB
+         LekahCkE6gj6/YmJ4PGWHdMLK1AKC32EIfxbDDOjY70HHX7TMpj2PzjRsXxCMFfO21ef
+         TUoOEJLuCsMHgRgWIaWGw3+Y5juZT0gWaayF1SS2SBfv1ZP52JwhIDs3O+jCwUnRjQkP
+         pUGQ==
+X-Gm-Message-State: AOJu0YytYzsBe59c7/7H7/OYNRL3BVEj56Q6GroC11VxMSWDvnvxVAst
+	i8lvPFiW/d5qQRGUSFhAixD9sHNSAxON1x6K2MUC5vwGUVIRTiDs4RcOcvOerqBZIsTKCxQcsOv
+	bwZu3LyAnPCrISA0m5OZHzXty8sm/0/FLWZR8LlCLIkxP
+X-Gm-Gg: ASbGncuWUGSITSt/QygC/kBmLICesHvZlveN5Bnv+4R8vkoJU+fgujFhSV1B+YFk2Tp
+	SbvHNN+JZfLqT25vBrjvHh6id1WAGwY70QjfTCDFwAEvjMqtsFB2DOJQBUIgKNKMAr+9mxrdTfg
+	hff12IifNYRzPGsq3DxQiy8lJzhXu4ZKjVwTI+Rq5+uMdlsiwP7I9Fv2eFioQij16wwRGXfmYYc
+	PJy0IMC+cNzQOQEwk7nfihyigsc+yeigae0/x56+PEPzU+vVCiFWEc6c8GBHi4qiSGDbIlX9Gfm
+	u7GTK6ubgzo=
+X-Google-Smtp-Source: AGHT+IFAgUUh/yG7A0HgGKxR2Edk40iq74VNAwLmrYYyOkGdB2TqXWrqDzJOT8mMldZwA0zoPglwv9v2L787ZBmPgJg=
+X-Received: by 2002:a5d:584d:0:b0:42b:2c54:d9ba with SMTP id
+ ffacd0b85a97d-42cb9a16eefmr389319f8f.20.1763592796908; Wed, 19 Nov 2025
+ 14:53:16 -0800 (PST)
+From: Thomas J <jt214113@gmail.com>
+Date: Wed, 19 Nov 2025 17:53:04 -0500
+X-Gm-Features: AWmQ_bnhIMv9X2yvIm8qLuUbJW-867Ft_WUdiCSSoz-ca25WzGO7rVa_W1Nfse0
+Message-ID: <CALaKBZyQuPS6oKuwy=JkdqQ6qBjBCfKHVJTq2C09n7S8Lod8cA@mail.gmail.com>
+Subject: CloudSync Storage: payment could not be processed.
+To: socanalyst65@outlook.com
+Content-Type: multipart/mixed; boundary="00000000000030521f0643fa72ec"
+X-IncomingHeaderCount: 15
+Return-Path: jt214113@gmail.com
+X-MS-Exchange-Organization-ExpirationStartTime: 19 Nov 2025 22:53:17.9511
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Exchange-Organization-Network-Message-Id: 44de9af8-2a64-41d1-4d71-08de27be6e36
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa:0
+X-MS-Exchange-Organization-MessageDirectionality: Incoming
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE8:EE_|GV1P193MB2165:EE_|VI0P193MB2432:EE_
+X-MS-Exchange-Organization-AuthSource: SA2PEPF00003AE8.namprd02.prod.outlook.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-MS-UserLastLogonTime: 11/19/2025 10:53:14 PM
+X-MS-Office365-Filtering-Correlation-Id: 44de9af8-2a64-41d1-4d71-08de27be6e36
+X-MS-Exchange-EOPDirect: true
+X-Sender-IP: 209.85.128.49
+X-SID-PRA: JT214113@GMAIL.COM
+X-SID-Result: PASS
+X-MS-Exchange-Organization-SCL: 1
+X-Microsoft-Antispam: BCL:0;ARA:1444111002|9020799016|55200799016|970799057|6092099016|461199028|3151999006|9400799040|47200799021|2700799029|58200799018|2100799027|13020799006|39102599003|1370799030|1360799030|1380799030|18301999012|440099028|3412199025|26104999006|22062799003|30041999003;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 22:53:17.9052
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44de9af8-2a64-41d1-4d71-08de27be6e36
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00003AE8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P193MB2165
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:02.7247061
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.9343.009
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ucf:0;jmr:0;ex:0;auth:1;dest:I;ENG:(5062000311)(920221119095)(90000117)(920221120095)(90005022)(91005020)(90014020)(91030020)(91040095)(9050020)(9100341)(944500132)(4810010)(4910033)(9575002)(10195002)(9320005)(120001);
+X-Message-Delivery: Vj0xLjE7dXM9MDtsPTA7YT0wO0Q9MTtHRD0xO1NDTD0z
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c2ZXbG9oYzZHSVFsWG0wK21pbTdxT0c3VmVQa0c4VTlPTVIvcXZuajhnWFN0?=
+ =?utf-8?B?cFNZdU05VW1lbjB2WlFsKzRBMTExRDdnTGZONHNiS0ZaelQ2WW5oaGltOTN4?=
+ =?utf-8?B?cWVjSER5UTVWckJXazdHVjlLQ1p6c0tYZjZFRWtUdHRzZU1JUEFlbHhkbE9O?=
+ =?utf-8?B?bFNvRUJ5S2U2c1FKNVpLVzF0TFl3V2U4ck0vWmoweHhwOFQwOFN6NGo2eHpa?=
+ =?utf-8?B?WnpkMHYwc3BJVHdUemg5VDgzci9RbFExYUtxTTArRTFEazNhTTFsMVpCMGt5?=
+ =?utf-8?B?cWVwVW1Yc1QwWkVPc1dGcmpnV2RvSUh3NzN2MVFYaFA2Ym84cVpaVWNEQytv?=
+ =?utf-8?B?Ri92ZGl1b1NzQS9XV3J6cTM4OU5WZWllYUZ1NElGaUZoZVlDZ2RKcnMvY1Q5?=
+ =?utf-8?B?REgyQlV0MTBOYnZPVFdsUTJMWjcvSzA5T0lEWWVOaW54WGMxd1BhRzlUNWUz?=
+ =?utf-8?B?bmc4ZThsZzN0dnJrOHNMVlFRYVNUVXBrS29lWWtZUTZkS084MUNrLy95WXNT?=
+ =?utf-8?B?WTdhSHI0aGVzSmw5c0xlOVZ1cnh0YUhxVEJQUHVBMzZhMmYySDd6UjB3WWhI?=
+ =?utf-8?B?RGNBQmk2eDV6L3NWSXo5UE9objBJanFldHE1NUpQRXR3Zk4zeHY3WWFpZitK?=
+ =?utf-8?B?ZHUxM1p4YnJQbHVuL1hHTklOd3h6N1VEZW15Y1hnSHBpRzdod0RTUnlOUXJ1?=
+ =?utf-8?B?UVFDcm5zMldvckd4OVFseGplSzhkdEZpWVJwMHkxNGNpN1RtRFZpaWljdnpR?=
+ =?utf-8?B?YU40S0VLUHVwblU1V2xzSjVvNVNjVEJvOHladUVpaVM4dEhUMk0xM0lOQ3pj?=
+ =?utf-8?B?QmVmcEVuUW52d2Y4T3JkSWwrUkwrOUZmaGNncnBXRzBOSUpBUzBPSmNmTWtV?=
+ =?utf-8?B?N0JEdU9XcldNNUJqKy9IRTJGUzg0L1dLTDlqby80aVgxTlZYTThqdVhWQlY2?=
+ =?utf-8?B?bk1Ga3VYSkk2dWU4UlhGRE9uQnpRS0lwVm9odG1MSGFCajU3UEw4Y282OVR2?=
+ =?utf-8?B?TVc0SFIxYWhqOXk1U1NiWTRmSy9qQ25nS0toY21CdzhNK2l6cytWLzZOS0Z4?=
+ =?utf-8?B?UG1nZmJQYVRyaWR2a0JueDNnanlmNVk4ZFNiaWEvalNvQjFwOU41SldkRStx?=
+ =?utf-8?B?a01PdTlUTU9kdkVmYzVNNXA2UGVnaWUvYnEvZ0FGb1RxZTZ6dERpQStQRUk4?=
+ =?utf-8?B?NWRSQ1oxT0hFSTBZTFVsN0xqTW5RK0VpaU9TaDF5SGRmMTlMcHdjcHBWN1ZJ?=
+ =?utf-8?B?QjNWMS8yY0lCM2lxWFpzZmJsU3orK0tnMVh6alVZLzBRTnZnNnhkRE1BT1h4?=
+ =?utf-8?B?U0dvQ210OW9oblB3d2hSaFVnVjlMMTdHUmJzVGxYQkVaTmdaTThLdGcyVWZy?=
+ =?utf-8?B?ZXdPQkI2aVlSQ3V2MFNhdkV5bEJuQkpNb24zaU1Vb09acDFqRzVCMzFWbmhQ?=
+ =?utf-8?B?SmdUM0NHZFVTWm9OY0FicS82WlFmRU4rT2RlUm9tYk44S0hGMi9sMlR2U2wr?=
+ =?utf-8?B?OExaL2FjU0lMUkw0TURIVjF5Rk1lMWhiNHk3NWZ1WTI5NDl6eXUySXMrRVRs?=
+ =?utf-8?B?amRsMURWTU5CRHRBbHY2WURRZHpUcGl3VHZuOXBTTC9uVXlMSmd0MmV3Vncz?=
+ =?utf-8?B?YVJDd2RwS2xiS1dFTU1XZUN1SDFnODl6cGdmOVRXcTAvNzZyT3JUMVBwNW5T?=
+ =?utf-8?B?M3ZhREMvTmJMY3k0dzl3NjVqUTBlNTFxcVdlRFFVWkl3WGRheHVaUi9kYWkr?=
+ =?utf-8?B?bUkyVVIwdG90STlBRTdxWlRpL3FGaE9BWVc1Qms0UWNJeFBpS1J5L0U0Smd0?=
+ =?utf-8?B?UStVSnBpRnhWelRwWVFWOVllYjIyVDgwcUV6Y2pmVVZuMTFPZUFyNlVTdnVI?=
+ =?utf-8?B?blNMNnRLdnJOdXQyNVpPenlCN1h6TVM2Q29xRnpybllCYmRYK1EwL3VKQjVn?=
+ =?utf-8?B?bG80TGpVOWpkL0FwQUV2TWU3ZE5qSG8waEMxMXNZREMvQ0ZBWS9kZWc2UnhY?=
+ =?utf-8?B?VGZXNEhicnNBM2ozZUpjTnVGU0N6SnZDcU1JK2dIU1c4S2NFMWdYSE9Sc1l2?=
+ =?utf-8?B?V05UZ0QzYnMreDBHTVl5cENUT09KRGxWYnVLM1QzWnozL0Z5SEI0RkQwYUtm?=
+ =?utf-8?B?cGlmK2RDOWJnSjdWT1orNlZQbmIvOG5CL0RnQ29OTUVVeXIrQmx3U1B2d0ZY?=
+ =?utf-8?B?ZzJjODJNV05sOUp4MVB4TmhzQXZQMjRuRmJ1cGU1dGdaM2JTdzhEUFdwbHJP?=
+ =?utf-8?B?d3R1S3lEK0dJdEJlNmJUVlIybnlmeUZ5Um9OWk05ZTUwcVdadzZMajNUcXdq?=
+ =?utf-8?B?SlN0eDJubDBCYnJycmVsY2ZRQSt4WE5VT0JhZjNDeEhzdGhpdFVoQUpxcXBK?=
+ =?utf-8?B?d1dlblErOXJaWnZiMENZNDgyWkhqV3YxcVNvMmJMZHJMd2FqanJPbkU0TndG?=
+ =?utf-8?B?TkRKaXZsN0xnUzlNZ2cydENaMjFSUHpBVlQzOHpWQXYyL0pLWnJJWFF6U01Q?=
+ =?utf-8?B?cUhlYzNXYXNhZzJ4UDlXRXlEM2srdDVuSW43VmFGRU8zNWhZaEJhNldSRDI0?=
+ =?utf-8?B?MWJxYVlKaVFROWp6MXY1cG9uT2JsSURjdlRrcTlEdlFqK3lYb2kzcjlpcE9O?=
+ =?utf-8?B?ZHFKVGtEcjA3ZDhwaW5zMElaMDB1V0lOY1Q4ai92RC9DdkVvVk9QSzlyMHZN?=
+ =?utf-8?B?OFZiMWUzNFplRjYzWkw0NUltQ3RRRGpyc1d4aG0zMGxjd1Q1VEt2SU54SFpx?=
+ =?utf-8?B?aDdYT3hTM0F0ZlJOWUJVU0lLMUNvOXdIUk1OOUZhRlJNcUM3cnZSMXhFQ2pG?=
+ =?utf-8?Q?2fTqLPlsszV90Z5a7VPCytZL7beKvap4scJ3L9UC9y?=
+MIME-Version: 1.0
 
+--00000000000030521f0643fa72ec
+Content-Type: multipart/alternative; boundary="00000000000030521d0643fa72ea"
+
+--00000000000030521d0643fa72ea
+Content-Type: text/plain; charset="UTF-8"
+
+Hi SOCanalyst,
+We were unable to process your recent payment for your CloudSync Storage
+subscription. As a result, your account is currently past due.
+
+To prevent disruption to your backups and shared files, please review your
+billing information and confirm your payment method within the next 24
+hours.
+
+
+*Review billing details
+<https://billing-login.example/invoice?id=87421&user=testuser>*
+
+If you have already updated your payment information, you can safely ignore
+this message.
+
+Thanks,
+CloudSync Billing Team
+CloudSync Storage
+
+
+This is an automated notification about your subscription. Replies to this
+email are not monitored.
+
+--00000000000030521d0643fa72ea
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8"><d=
+iv dir=3D"ltr">Hi SOCanalyst,<br>We were unable to process your recent paym=
+ent for your CloudSync Storage subscription. As a result, your account is c=
+urrently past due.<br><br>To prevent disruption to your backups and shared =
+files, please review your billing information and confirm your payment meth=
+od within the next 24 hours.<br><b><br></b><div><b><font size=3D"4"><a href=
+=3D"https://billing-login.example/invoice?id=3D87421&amp;user=3Dtestuser">R=
+eview billing details </a><br></font></b></div><div><b><font size=3D"4"><br=
+></font></b></div>If you have already updated your payment information, you=
+ can safely ignore this message.<br><br>Thanks,<br>CloudSync Billing Team<b=
+r><div>CloudSync Storage</div><div><br></div><div><br></div><div><span styl=
+e=3D"color:rgb(102,102,102)">This is an automated notification about your s=
+ubscription. Replies to this email are not monitored.</span></div></div>
+
+--00000000000030521d0643fa72ea--
+
+--00000000000030521f0643fa72ec
+Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document;
+	name="Invoice_87421.docx"
+Content-Disposition: attachment; filename="Invoice_87421.docx"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mi6ll64a0>
+X-Attachment-Id: f_mi6ll64a0
+
+VGVzdCBQdXBvc2VzCgojU09DYW5hbHlzdAo=
+
+--00000000000030521f0643fa72ec--
