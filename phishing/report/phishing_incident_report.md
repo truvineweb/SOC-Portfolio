@@ -1,10 +1,10 @@
-**Case ID: PHISH-20251119-001
-Title: CloudSync Storage Billing Phish to Test Outlook Mailbox
-Author: Truvine, SOC Analyst L1
-Created: 19 Nov 2025 23:20 WAT / 22:20 UTC
-TLP: CLEAR
-Status: Closed (Simulated Incident)
-Severity: Medium**
+**Case ID: PHISH-20251119-001**
+**Title: CloudSync Storage Billing Phish to Test Outlook Mailbox.**
+**Author: Truvine, SOC Analyst L1**
+**Created: 19 Nov 2025 23:20 WAT / 22:20 UTC**
+**TLP: CLEAR**
+**Status: Closed (Simulated Incident)**
+**Severity: Medium**
 
 **Executive Summary**
 
